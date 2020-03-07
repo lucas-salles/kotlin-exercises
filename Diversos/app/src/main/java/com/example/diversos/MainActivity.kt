@@ -2,6 +2,7 @@ package com.example.diversos
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnSms: Button
     private lateinit var btnYoutube: Button
     private lateinit var btnFoto: Button
+
+    val FOTO = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,6 +160,26 @@ class MainActivity : AppCompatActivity() {
     fun foto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-        startActivity(intent)
+        //startActivity(intent)
+        startActivityForResult(intent, FOTO)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == FOTO) {
+            val foto = data?.extras?.get("data") as Bitmap
+
+            val janela = AlertDialog.Builder(this)
+            janela.setTitle("Minha foto")
+            janela.setIcon(R.mipmap.ic_launcher)
+            janela.setPositiveButton("Ok", null)
+
+            val imageView = ImageView(this)
+            imageView.setImageBitmap(foto)
+
+            janela.setView(imageView)
+
+            janela.create().show()
+        }
     }
 }
