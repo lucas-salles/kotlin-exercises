@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Imagens</string>
+
+    <string-array name="sm_resolution">
+        <item>ldpi</item>
+        <item>mdpi</item>
+        <item>hdpi</item>
+        <item>xhdpi</item>
+        <item>xxhdpi</item>
+        <item>xxxhdpi</item>
+    </string-array>
+</resources>
