@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         janela.create().show()
     }
 
-    private fun imagemHandler(resolucao: String?) {
+    private fun imagemHandler(resolucao: String) {
         val handler = Handler()
         val url = "http://www.valeria.eti.br/sm/sm_${resolucao}.png"
         Thread {
