@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Imagens</string>
 
-    <string-array name="sm_resolution">
+    <string-array name="sm_resolucoes">
         <item>ldpi</item>
         <item>mdpi</item>
         <item>hdpi</item>

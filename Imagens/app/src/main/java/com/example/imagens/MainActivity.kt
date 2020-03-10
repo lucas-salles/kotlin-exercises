@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun download() {
-        var selecionado: String? = null
-        val resolucoes = resources.getStringArray(R.array.sm_resolution)
+        var selecionado = "ldpi"
+        val resolucoes = resources.getStringArray(R.array.sm_resolucoes)
 
         val janela = AlertDialog.Builder(this)
         janela.setTitle("Escolha uma resolução")
@@ -75,11 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         janela.setPositiveButton("Ok") { dialog, i ->
-            if (selecionado == null) {
-                imagemHandler("ldpi")
-            } else {
-                imagemHandler(selecionado)
-            }
+            imagemHandler(selecionado)
         }
 
         janela.create().show()
