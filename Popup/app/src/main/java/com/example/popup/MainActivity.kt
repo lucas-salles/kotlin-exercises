@@ -186,18 +186,28 @@ class MainActivity : AppCompatActivity() {
 
     fun unico() {
         val janela = AlertDialog.Builder(this)
-        var msg = "Opção 1"
-        val opcoesArray = arrayOf("Opção 1", "Opção 2", "Opção 3", "Opção 4")
+        this.view = RadioGroup(this)
 
+        val rg = view as RadioGroup
+        val opcoesArray = arrayOf("Opção 1", "Opção 2", "Opção 3", "Opção 4")
+        for (i in opcoesArray.indices) {
+            val rb = RadioButton(this)
+            rb.text = opcoesArray[i]
+            rg.addView(rb)
+        }
 
         janela.setTitle("Único")
         janela.setIcon(R.mipmap.ic_launcher)
+        janela.setMessage("Escolha uma opção")
+        janela.setView(view)
 
-        janela.setSingleChoiceItems(opcoesArray, 0) { dialogInterface, which ->
-            msg = opcoesArray[which]
-        }
+        janela.setPositiveButton("Ok") {_, _ ->
+            var msg = "Nenhuma opção selecionada"
 
-        janela.setPositiveButton("Ok") {dialog, which ->
+            if (rg.checkedRadioButtonId !== -1) {
+                msg = rg.findViewById<RadioButton>(rg.checkedRadioButtonId).text.toString()
+            }
+
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
@@ -210,26 +220,45 @@ class MainActivity : AppCompatActivity() {
 
     fun varios() {
         val janela = AlertDialog.Builder(this)
-        var msg = ""
-        val opcoesArray = arrayOf("Opção 1", "Opção 2", "Opção 3", "Opção 4")
-        val checkedOpcoesArray =  booleanArrayOf(true, false, false, false)
-        val opcoesList =  Arrays.asList(*opcoesArray)
+        this.view = LinearLayout(this)
 
+        val ll = view as LinearLayout
+        ll.orientation = LinearLayout.VERTICAL
+        val opcoesArray = arrayOf("Opção 1", "Opção 2", "Opção 3", "Opção 4")
+        for (i in opcoesArray.indices) {
+            val cb = CheckBox(this)
+            cb.text = opcoesArray[i]
+            ll.addView(cb)
+        }
 
         janela.setTitle("Vários")
         janela.setIcon(R.mipmap.ic_launcher)
+        janela.setMessage("Escolha as opções")
+        janela.setView(view)
 
-        janela.setMultiChoiceItems(opcoesArray, checkedOpcoesArray) { dialog, which, isChecked ->
-            checkedOpcoesArray[which] = isChecked
-        }
-
-        janela.setPositiveButton("Ok") {dialog, which ->
-            for (i in checkedOpcoesArray.indices) {
-                val checked = checkedOpcoesArray[i]
-                if (checked) {
-                    msg += opcoesList[i] + "\n"
+        janela.setPositiveButton("Ok") {_, _ ->
+            val cbs : ArrayList<CheckBox> = ArrayList()
+            val filhosQtd : Int = ll.childCount
+            for (i in 0 until filhosQtd) {
+                var view: View = ll.getChildAt(i)
+                if (view is CheckBox && view.isChecked) {
+                    cbs.add(view)
                 }
             }
+
+            var msg = ""
+            if (cbs.isNotEmpty()) {
+                for (i in cbs.indices) {
+                    if (i == 0) {
+                        msg += cbs[i].text.toString()
+                    } else {
+                        msg += "\n" + cbs[i].text.toString()
+                    }
+                }
+            } else {
+                msg = "Nenhuma opção selecionada"
+            }
+
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
