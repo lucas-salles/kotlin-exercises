@@ -6,17 +6,15 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etNumero: EditText
     private lateinit var btnOk: Button
-    private lateinit var btnSobre: Button
-    private lateinit var tvDica: TextView
-    private lateinit var llAcertou: LinearLayout
-    private lateinit var llErrou: LinearLayout
-    private lateinit var llSobre: LinearLayout
-    private lateinit var tvResposta: TextView
+    private lateinit var tvDica1: TextView
+    private lateinit var tvDica2: TextView
+    private lateinit var tvDica3: TextView
     private var random = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,76 +23,63 @@ class MainActivity : AppCompatActivity() {
 
         this.etNumero = findViewById(R.id.etNumero)
         this.btnOk = findViewById(R.id.btnOk)
-        this.btnSobre = findViewById(R.id.btnSobre)
-        this.tvDica = findViewById(R.id.tvDica)
-        this.llAcertou = findViewById(R.id.llAcertou)
-        this.llErrou = findViewById(R.id.llErrou)
-        this.llSobre = findViewById(R.id.llSobre)
-        this.tvResposta = findViewById(R.id.tvResposta)
+        this.tvDica1 = findViewById(R.id.tvDica1)
+        this.tvDica2 = findViewById(R.id.tvDica2)
+        this.tvDica3 = findViewById(R.id.tvDica3)
 
         this.btnOk.setOnClickListener(OnClickBotao())
-
-        this.btnSobre.setOnClickListener({
-            this.llSobre.visibility = View.VISIBLE
-        })
-
-        this.llSobre.setOnClickListener({
-            this.llSobre.visibility = View.INVISIBLE
-        })
-
-        this.llAcertou.setOnClickListener({
-            this.llAcertou.visibility = View.INVISIBLE
-            gerarDica()
-        })
-
-        this.llErrou.setOnClickListener({
-            this.llErrou.visibility = View.INVISIBLE
-            gerarDica()
-        })
-
-        gerarDica()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        gerarDica()
+    override fun onResume() {
+        super.onResume()
+
+        novoJogo()
     }
 
-    fun gerarDica() {
-        var dica = ""
-        val divisores = ArrayList<Int>()
-
-        random = Random().nextInt(100) + 1
+    fun novoJogo() {
+        random = Random.nextInt(1, 101)
 
         Log.i("APP_ACERTE", random.toString())
 
-        this.etNumero.text.clear()
+        tvDica1.text = gerarDica1(random).joinToString(" ")
+        tvDica2.text = gerarDica2(random)
+        tvDica3.text = gerarDica3(random)
+    }
+
+    fun gerarDica1(numero: Int): ArrayList<Int> {
+        val divisores = ArrayList<Int>()
 
         for (i in 10 downTo 1) {
-            if (random % i == 0) {
-                divisores.add(i)
-            }
+            if (numero % i == 0) divisores.add(i)
         }
 
-        dica += "Divisores: " + divisores.joinToString(" ") + "."
+        return divisores
+    }
 
-        if(random % 2 == 0) dica += "\nÉ par."
-        else dica += "\nÉ impar."
+    fun gerarDica2(numero: Int): String {
+        var dica: String
 
-        dica += "\nQuantidade de divisores: " + divisores.size + "."
+        if(numero % 2 == 0) dica = "É par."
+        else dica = "É impar."
 
-        this.tvDica.text = dica
+        return dica
+    }
+
+    fun gerarDica3(numero: Int): String {
+        val divisores = gerarDica1(numero)
+
+        return (divisores.size + 1).toString()
     }
 
     inner class OnClickBotao : View.OnClickListener {
         override fun onClick(v: View?) {
             val numero = this@MainActivity.etNumero.text.toString().toInt()
 
-            if(numero == random) this@MainActivity.llAcertou.visibility = View.VISIBLE
-            else {
-                this@MainActivity.llErrou.visibility = View.VISIBLE
-                this@MainActivity.tvResposta.text = "Resposta: " + random.toString()
-            }
+            if(numero == random) Toast.makeText(this@MainActivity, "Acertou", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this@MainActivity, "Errou, valor gerado ${random}", Toast.LENGTH_SHORT).show()
+
+            this@MainActivity.etNumero.text.clear()
+            novoJogo()
         }
     }
 }
