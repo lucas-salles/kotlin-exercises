@@ -1,6 +1,5 @@
 package com.example.rgb
 
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,7 +13,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvVermelho: TextView
     private lateinit var tvVerde: TextView
     private lateinit var tvAzul: TextView
-    val RGB = 1
+    private lateinit var receiver: TelaReceiver
+    private lateinit var filter: IntentFilter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,35 +24,40 @@ class MainActivity : AppCompatActivity() {
         this.tvVerde = findViewById(R.id.tvVerde)
         this.tvAzul = findViewById(R.id.tvAzul)
 
-        val intent = Intent("RGB")
-        startActivityForResult(intent, RGB)
-
-        this.registerReceiver(this.broadcastReceiver, IntentFilter("TELA"));
-    }
-
-    var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            this@MainActivity.resetaTexto()
+        if (intent.hasExtra(Intent.EXTRA_TEXT)){
+            this.tvVermelho.text = intent.getStringExtra(Intent.EXTRA_TEXT)
+            this.tvVerde.text = intent.getStringExtra(Intent.EXTRA_TEXT)
+            this.tvAzul.text = intent.getStringExtra(Intent.EXTRA_TEXT)
         }
+
+        this.criarReceiver()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        this.unregisterReceiver(this.broadcastReceiver);
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(this.receiver, this.filter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(this.receiver)
+    }
+
+    private fun criarReceiver(){
+        this.receiver = TelaReceiver()
+        this.filter = IntentFilter()
+        this.filter.addAction(Intent.ACTION_USER_PRESENT)
     }
 
     fun resetaTexto() {
-        this.tvVermelho.text = "Vermelho"
-        this.tvVerde.text = "Verde"
-        this.tvAzul.text = "Azul"
+        this.tvVermelho.text = "Red"
+        this.tvVerde.text = "Green"
+        this.tvAzul.text = "Blue"
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK && requestCode == RGB) {
-            this@MainActivity.tvVermelho.text = data?.getStringExtra("TEXTO").toString()
-            this@MainActivity.tvVerde.text = data?.getStringExtra("TEXTO").toString()
-            this@MainActivity.tvAzul.text = data?.getStringExtra("TEXTO").toString()
+    inner class TelaReceiver: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            this@MainActivity.resetaTexto()
         }
     }
 }
